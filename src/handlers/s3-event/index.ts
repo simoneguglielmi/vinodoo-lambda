@@ -13,8 +13,8 @@ export const handler: Handler = async (event: S3Event) => {
     try {
       const item = await s3Client.send(
         new GetObjectCommand({
-          Bucket: record.s3.bucket.name,
-          Key: record.s3.object.key,
+          Bucket: bucketName,
+          Key: key,
         })
       );
 
