@@ -1,16 +1,11 @@
 import config from '../shared/configurations';
-import { Stack, StackProps, RemovalPolicy, Duration, Arn } from 'aws-cdk-lib';
-import { Runtime, FunctionUrlAuthType, Code } from 'aws-cdk-lib/aws-lambda';
+import { Stack, StackProps, RemovalPolicy, Duration } from 'aws-cdk-lib';
+import { Runtime, FunctionUrlAuthType } from 'aws-cdk-lib/aws-lambda';
 import { Bucket, EventType } from 'aws-cdk-lib/aws-s3';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
-import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { LambdaDestination } from 'aws-cdk-lib/aws-s3-notifications';
-import { Queue } from 'aws-cdk-lib/aws-sqs';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { S3EventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
-
-// import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class VinodooLambdaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -39,23 +34,16 @@ export class VinodooLambdaStack extends Stack {
 
     fn.addToRolePolicy(
       new PolicyStatement({
-        actions: ['s3:GetBucketNotification', 's3:PutBucketNotification'],
+        actions: [
+          's3:GetBucketNotification',
+          's3:PutBucketNotification',
+          's3:GetObject',
+        ],
         effect: Effect.ALLOW,
-        resources: [bucket.bucketArn],
+        resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
       })
     );
 
     fn.addEventSource(s3EventSource);
-
-    // new LambdaRestApi(this, 'VinodooLambdaApi', {
-    //   handler: fn,
-    // });
-
-    // The code that defines your stack goes here
-
-    // example resource
-    // const queue = new sqs.Queue(this, 'VinodooLambdaQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
   }
 }
